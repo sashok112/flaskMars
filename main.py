@@ -1,17 +1,13 @@
-from flask import Flask, url_for
+# flask_ngrok_example.py
+from flask import Flask
+from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
+run_with_ngrok(app)  # Start ngrok when app is run
 
-
-@app.route('/image_mars')
-def image():
-    return f'''
-    <title>Привет, Марс!</title>
-    <h1>Жди нас, Марс!</h1>
-    <img src="{url_for('static', filename='img/mars_planet.png')}" 
-           alt="здесь должна была быть картинка, но не нашлась">
-     <br>Вот она, какая красивая планета!</br>'''
-
+@app.route("/")
+def hello():
+    return "Hello World!"
 
 if __name__ == '__main__':
-    app.run(port=5000, host='127.0.0.1')
+    app.run()
