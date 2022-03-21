@@ -1,10 +1,27 @@
 import os
+import threading
 
 from flask import Flask, url_for
+from pyngrok import ngrok, conf
+
+os.environ["FLASK_ENV"] = "development"
 
 app = Flask(__name__)
+port = 5000
+
+conf.get_default().auth_token = "1TAQMab2CGNEfLxOf5wPDf4UPCn_xQdDqeHaPDEEt96k9tee"
+# Open a ngrok tunnel to the HTTP server
+public_url = ngrok.connect(port).public_url
+print(" * ngrok tunnel \"{}\" -> \"http://127.0.0.1:{}\"".format(public_url, port))
+
+# Update any base URLs to use the public ngrok URL
+app.config["BASE_URL"] = public_url
 
 
+# ... Update inbound traffic via APIs to use the public-facing ngrok URL
+
+
+# Define Flask routes
 @app.route("/")
 def index():
     return "Привет от приложения Flask"
@@ -20,6 +37,5 @@ def image():
      <br>Вот она, какая красивая планета!</br>'''
 
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+# Start the Flask server in a new thread
+threading.Thread(target=app.run, kwargs={"use_reloader": False}).start()
